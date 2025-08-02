@@ -1,0 +1,26 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  proxy-api:
+    build: ./proxy_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  proxy-manager:
+    build: ./proxy_manager
+    command: ["python", "fetch_validate.py"]
+    depends_on:
+      - redis
+
+  visit-bot:
+    build: ./visit_bot
+    command: ["python", "visit.py"]
+    depends_on:
+      - redis
