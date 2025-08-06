@@ -216,6 +216,9 @@ def simulate_user_behavior(driver):
 def visit_blog(url, proxy=None):
     """访问博客页面"""
     try:
+        # 在visit_blog函数的chrome_options配置中添加
+         chrome_options.binary_location = "/usr/bin/chromium-browser"
+         chrome_options.add_argument("--headless=new")  # Ubuntu服务器版无界面时需启用
         # 配置Chrome选项
         chrome_options = Options()
         chrome_options.add_argument(f'user-agent={random.choice(USER_AGENTS)}')
