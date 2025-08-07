@@ -164,17 +164,20 @@ def visit_blog(url, proxy=None):
 
 def main():
     print(f"目标: {TARGET_URL}")
-    try:
-        visit_count = int(input(f"访问次数(1-{MAX_VISITS_PER_RUN}): "))
-        visit_count = min(max(visit_count, 1), MAX_VISITS_PER_RUN)
-    except:
-        visit_count = 5
+    
+    visit_count = 10  # 固定访问次数
+    refresh_proxies = False  # 是否强制刷新代理
+    use_local = True  # 允许使用本地IP
+
     ip_history = load_ip_history()
-    proxies = get_available_proxies(input("刷新代理? (y/n): ").lower() == 'y')
-    if not proxies:
-        if input("使用本地IP? (y/n): ").lower() != 'y': return
+    proxies = get_available_proxies(force_refresh=refresh_proxies)
+
+    if not proxies and not use_local:
+        return
+
     success = 0
     start = time.time()
+
     for i in range(1, visit_count + 1):
         print(f"\n第 {i} 次访问")
         proxy = get_suitable_proxy(proxies, ip_history) if proxies else None
@@ -187,8 +190,10 @@ def main():
             wait = random.uniform(MIN_VISIT_INTERVAL, MAX_VISIT_INTERVAL)
             print(f"等待 {wait:.2f} 秒...\n")
             time.sleep(wait)
+
     save_ip_history(ip_history)
     print(f"完成: {success}/{visit_count} | 耗时: {time.time()-start:.2f}s")
+
 
 if __name__ == "__main__":
     main()
